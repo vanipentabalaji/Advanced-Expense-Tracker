@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Limit Exceeded</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; padding: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; }
+        .title { font-size: 20px; font-weight: bold; color: #5bc0de; }
+        .amount { font-size: 18px; font-weight: bold; color: #d9534f; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <p class="title">Hi <span th:text="${name}">User</span>,</p>
+
+        <p>
+            You have exceeded your monthly expense limit of ₹
+            <span th:text="${monthlyLimit}">0</span>
+        </p>
+
+        <p>
+            Your current total for this month is:
+            <span class="amount" th:text="${totalAmountSpent}">0</span>
+        </p>
+
+        <p>Please review your expenses to stay within budget.</p>
+
+        <p>Thanks,<br/>Expense Tracker App</p>
+    </div>
+</body>
+</html>
