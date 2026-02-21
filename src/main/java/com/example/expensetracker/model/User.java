@@ -12,25 +12,19 @@ import java.time.LocalDate;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Setter
     private String username;
 
-    @Getter
-    @Setter
     private String gmail;
 
-    @Getter
-    @Setter
     private LocalDate createdAt;
 
-    @Getter
-    @Setter
     private double monthlyLimit; // Monthly limit for expenses
 }

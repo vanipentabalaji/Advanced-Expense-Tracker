@@ -3,6 +3,7 @@ package com.example.expensetracker.service;
 
 import com.example.expensetracker.dto.ExpenseDTO;
 import com.example.expensetracker.model.Expense;
+import java.util.List;
 
 public interface ExpenseService {
 
@@ -13,4 +14,6 @@ public interface ExpenseService {
     Expense deleteExpenses(Long expenseId);
 
     ExpenseDTO getExpenses(Long userId);
+
+    List<Expense> getAllExpensesByUserId(Long userId);
 }

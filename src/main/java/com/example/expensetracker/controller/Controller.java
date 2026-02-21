@@ -4,6 +4,7 @@ import com.example.expensetracker.dto.ExpenseDTO;
 import com.example.expensetracker.dto.UserDTO;
 import com.example.expensetracker.exceptions.ExpenseNotFoundException;
 import com.example.expensetracker.exceptions.UserNotFoundException;
+import com.example.expensetracker.model.Expense;
 import com.example.expensetracker.service.ExpenseService;
 import com.example.expensetracker.service.NotificationService;
 import com.example.expensetracker.service.UserService;
@@ -14,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,12 +25,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.expensetracker.model.Expense;
+import java.util.List;
+
+import com.example.expensetracker.model.User;
 
 
 @Slf4j
 @RestController
 @RequestMapping("/expense-tracker")
+@CrossOrigin
 public class Controller {
 
     @Autowired
@@ -46,8 +51,29 @@ public class Controller {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Username and Gmail must not be null");
         }
-        userService.onboardUser(userDTO);
-        return ResponseEntity.ok("Onboarded user successfully!!");
+
+        // Check if username already exists
+        if (userService.isUsernameExists(userDTO.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Username already exists. Please choose a different username");
+        }
+
+        User createdUser = userService.onboardUser(userDTO);
+        return ResponseEntity.ok(createdUser);
+    }
+
+    @PostMapping("/login/users")
+    public ResponseEntity<Object> LoginUsers(@RequestBody UserDTO userDTO) {
+        try {
+            if (userDTO.getUsername() == null || userDTO.getGmail() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Username and Gmail must not be null");
+            }
+            User loginUser = userService.loginUser(userDTO);
+            return ResponseEntity.ok(loginUser);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping("/add-expenses/{userId}")
@@ -60,8 +86,8 @@ public class Controller {
                         .body("All fields must be provided and valid");
             }
 
-            expenseService.addExpenses(expenseDTO, userId);
-            return ResponseEntity.ok("Expense added successfully");
+            Expense createdExpense = expenseService.addExpenses(expenseDTO, userId);
+            return ResponseEntity.ok(createdExpense);
 
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -111,8 +137,9 @@ public class Controller {
                         .body("User ID must be provided and valid");
             }
 
-            ExpenseDTO expenseDTO = expenseService.getExpenses(userId);
-            return ResponseEntity.ok(expenseDTO);
+            // Get the list of expenses directly
+            List<Expense> expenses = expenseService.getAllExpensesByUserId(userId);
+            return ResponseEntity.ok(expenses);
 
         } catch (UserNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

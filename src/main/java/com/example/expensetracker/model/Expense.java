@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,31 +18,26 @@ import lombok.Setter;
 @Table(name = "expenses")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Expense {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Getter
-    @Setter
     @ManyToOne
     private User user;
 
-    @Getter
-    @Setter
     private String description;
 
-    @Getter
-    @Setter
     private double amount;
 
-    @Getter
-    @Setter
     private LocalDate expenseDate;
 
-    @Getter
-    @Setter
     private String category;
+
+    @Transient
+    private Boolean limitExceeded = false;
     
 }

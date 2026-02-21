@@ -54,8 +54,11 @@ public class ExpenseServiceImpl implements ExpenseService {
         Double totalExpenses = expenseRepository.getMonthlyTotalExpenses(userId, month, year);
 
         if (totalExpenses != null && totalExpenses > user.getMonthlyLimit()) {
+            expense.setLimitExceeded(true);
             notificationService.sendLimitExceededMail(user.getGmail(), user.getUsername(), user.getMonthlyLimit(), totalExpenses);
             log.info("Monthly limit exceeded for user with id " + userId + ". Notification sent successfully");
+        } else {
+            expense.setLimitExceeded(false);
         }
         log.info("Expense added for user with id " + userId + ": " + expense);
         return expense;
@@ -92,18 +95,31 @@ public class ExpenseServiceImpl implements ExpenseService {
         }
         List<Expense> expensesList = expenseRepository.findByUserId(userId);
         
+        // Return empty list instead of throwing exception
         if (expensesList.isEmpty()) {
-            throw new ExpenseNotFoundException("No expenses found for user with id " + userId);
+            expensesList = new java.util.ArrayList<>();
         }
-
+        
+        // Create a wrapper to return
         ExpenseDTO expenseDTO = new ExpenseDTO();
-        for (Expense expense : expensesList) {
-            expenseDTO.setUserId(userId);
-            expenseDTO.setDescription(expense.getDescription());
-            expenseDTO.setAmount(expense.getAmount());
-            expenseDTO.setExpenseDate(expense.getExpenseDate());
-            expenseDTO.setCategory(expense.getCategory());
-        }
+        expenseDTO.setUserId(userId);
+        
         return expenseDTO;
+    }
+
+    @Override
+    public List<Expense> getAllExpensesByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            throw new UserNotFoundException("User with id " + userId + " not found");
+        }
+        List<Expense> expensesList = expenseRepository.findByUserId(userId);
+        
+        // Return empty list if no expenses
+        if (expensesList == null) {
+            expensesList = new java.util.ArrayList<>();
+        }
+        
+        return expensesList;
     }
 }
