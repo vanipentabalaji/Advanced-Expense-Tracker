@@ -164,24 +164,14 @@ npm run build
 
 ## 👥 Authors
 
-- **Vanipenta Balaji** - Initial development
-
-## 🆘 Support
-
-For questions or issues:
-1. Check existing [GitHub Issues](../../issues)
-2. Create a new issue with detailed description
-3. Provide screenshots or logs when applicable
+- **Balaji Vanipenta** - Initial development
 
 ## 🗺️ Roadmap
 
 - [ ] Multi-user collaboration features
 - [ ] Budget alerts and notifications
-- [ ] Data export (CSV, PDF)
-- [ ] Mobile app
 - [ ] Advanced analytics and forecasting
 - [ ] Recurring expenses
-- [ ] Receipt scanning with OCR
 
 ---
 
